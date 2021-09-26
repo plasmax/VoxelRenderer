@@ -1,8 +1,13 @@
-#! C:/Program Files/Nuke9.0v1/nuke-9.0.1.dll -nx
-version 9.0 v1
-Gizmo {
+set cut_paste_input [stack 0]
+version 12.2 v3
+push $cut_paste_input
+Group {
+ name V_Shape1
  knobChanged "\nif nuke.thisKnob().name() == \"shape\":\n    if nuke.thisKnob().getValue() < 3:\n        for knob in (\"xplane\", \"yplane\", \"zplane\"):\n            nuke.thisNode().knob(knob).setFlag(0x00040000)\n    else:\n        for knob in (\"xplane\", \"yplane\", \"zplane\"):\n            nuke.thisNode().knob(knob).clearFlag(0x00040000)\n"
  tile_color 0xc17939ff
+ selected true
+ xpos 299
+ ypos 306
  addUserKnob {20 VoxelTransform}
  addUserKnob {4 shape l Shape M {Sphere Cube Diamond Plane}}
  addUserKnob {6 xplane l x -STARTLINE +HIDDEN}
@@ -40,7 +45,7 @@ Gizmo {
   xpos 596
   ypos -53
  }
-set N35489c00 [stack 0]
+set N7d7e4100 [stack 0]
 add_layer {voxels voxels.x voxels.y voxels.z voxels.density}
  Shuffle {
   in2 voxels
@@ -53,7 +58,7 @@ add_layer {voxels voxels.x voxels.y voxels.z voxels.density}
   ypos -6
   postage_stamp true
  }
-set N35489800 [stack 0]
+set N7d7c7900 [stack 0]
  Dot {
   name Dot11
   note_font_size 20
@@ -61,18 +66,20 @@ set N35489800 [stack 0]
   ypos 34
  }
  BlinkScript {
-  KernelDescription "1 \"VoxelTransform\" iterate pixelWise 354232abd4b87787704b45ded14d128e6ab984911e1d96996bcb02f1716fd247 2 \"voxels\" Read Point \"dst\" Write Point 1 \"M\" Float 16 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
-  EncodedSource "1 560 v7d+FffYZuYXrpANrf8U9gMUq0czvpPNBwqEzbF+EQ4nfF0MmAhi1FxmM35Q3zcaRlWrKTokEw310zbW4DugWYz4y3w8FJe/IzcFOWvZAYPoWa6xpXoOCvMAKVHs5fR7LqluJLeZ3tg3qYxMb+Fj03UPfaYFf5N/PSMIGkIF0CED4ipLmd1ELd+KbKKsJwagwcoiEHXEbOV+tiBIvi834XbRc1cbZB5OUyz1iTLdG4U3fofpM2mY0np9MNUdcVPQW/u0tENG8rSwOKbac9yRQKF48ule3kTNRg0mRkn3pOS8eXZSlKBWltmM6ANt01FxcuPiuwkkfmEqNOte4SGNvm6+LOx+KUqtXUq33THnOKDvjgOJFerj5Cc8JIVxG2Z7La83qvhK51HIolN9KiiXuRAVWDKTMk8+WbamS7Wfwm9h9OIM+TfybJWMN1Fv/vDW9jbN9E3cg9VZQgX/pz55zPWjXEFoki7oiPHHUGU2BAWffJiOzBjaVAF8Yds5Ombn5vH/wQuYtdgT97ivHL+mJpKZ+nXqxZHexXcCZQoaWuZz17o/zCuZaRDLnQPnGyhz49yByP15/xSFwIDzD4/giRa5P0XSnR8uzDtJmcFR0qtuQ9UZidfvmSCifVZyC/u2rNprrfINMbmenQK8CFeO/XXNAGfPMvSymS5lVUfO7rCJo4mnBrk2V+zsTvdxYS+B8sM6K7fj8mUXVUmjP4Y4eCfyyxZNc9aDUWz2fggvrNJKi6/bmqY8u13rshy4Y6Ym"
+  recompileCount 1
+  ProgramGroup 1
+  KernelDescription "2 \"VTransform\" iterate pixelWise 5b690b92e4ac81d8c4109362853108ee2d03e941660f97309bcdff56941ad2cd 2 \"voxels\" Read Point \"dst\" Write Point 1 \"M\" Float 16 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA== 1 \"M\" 16 1 0"
+  kernelSource "kernel VTransform : ImageComputationKernel<ePixelWise>\n\{\n  Image<eRead> voxels;\n  Image<eWrite> dst;\n\n  param:\n    float4x4 M;\n  \n  float4 multVectMatrix(float4 vec, float4x4 M)\n  \{\n    float4 out = float4(\n      vec.x * M\[0]\[0] + vec.y * M\[0]\[1] + vec.z * M\[0]\[2] + M\[0]\[3],\n      vec.x * M\[1]\[0] + vec.y * M\[1]\[1] + vec.z * M\[1]\[2] + M\[1]\[3],\n      vec.x * M\[2]\[0] + vec.y * M\[2]\[1] + vec.z * M\[2]\[2] + M\[2]\[3],\n      vec.w\n    );\n\n    return out;\n  \}\n\n  void process()\n  \{\n    float4 position = voxels();\n    dst() = multVectMatrix(position, M);\n  \} \n\};"
   rebuild ""
-  group_VoxelTransform_M 1
-  VoxelTransform_M {
+  VTransform_M {
       {{"\[lindex \[lindex \[metadata vTransformMatrix frame] 0] 0]"} {"\[lindex \[lindex \[metadata vTransformMatrix frame] 0] 1]"} {"\[lindex \[lindex \[metadata vTransformMatrix frame] 0] 2]"} {"\[lindex \[lindex \[metadata vTransformMatrix frame] 0] 3]"}}
       {{"\[lindex \[lindex \[metadata vTransformMatrix frame] 1] 0]"} {"\[lindex \[lindex \[metadata vTransformMatrix frame] 1] 1]"} {"\[lindex \[lindex \[metadata vTransformMatrix frame] 1] 2]"} {"\[lindex \[lindex \[metadata vTransformMatrix frame] 1] 3]"}}
       {{"\[lindex \[lindex \[metadata vTransformMatrix frame] 2] 0]"} {"\[lindex \[lindex \[metadata vTransformMatrix frame] 2] 1]"} {"\[lindex \[lindex \[metadata vTransformMatrix frame] 2] 2]"} {"\[lindex \[lindex \[metadata vTransformMatrix frame] 2] 3]"}}
       {{"\[lindex \[lindex \[metadata vTransformMatrix frame] 3] 0]"} {"\[lindex \[lindex \[metadata vTransformMatrix frame] 3] 1]"} {"\[lindex \[lindex \[metadata vTransformMatrix frame] 3] 2]"} {"\[lindex \[lindex \[metadata vTransformMatrix frame] 3] 3]"}}
     }
-  protectKernelWhenPublishing true
+  rebuild_finalise ""
   name BlinkScript2
+  selected true
   xpos 672
   ypos 81
  }
@@ -82,7 +89,7 @@ set N35489800 [stack 0]
   xpos 706
   ypos 149
  }
-push $N35489800
+push $N7d7c7900
  Switch {
   inputs 2
   which {{parent.world_space}}
@@ -96,14 +103,14 @@ push $N35489800
   xpos 596
   ypos 246
  }
-set N35488400 [stack 0]
+set N7d7c4f00 [stack 0]
  Dot {
   name Dot4
   note_font_size 20
   xpos 701
   ypos 246
  }
-set N35488000 [stack 0]
+set N7d7c4800 [stack 0]
  Dot {
   name Dot6
   note_font_size 20
@@ -124,7 +131,6 @@ set N35488000 [stack 0]
   channel1 none
   channel2 none
   name PLANE
-  selected true
   xpos 777
   ypos 306
  }
@@ -134,7 +140,7 @@ set N35488000 [stack 0]
   xpos 811
   ypos 441
  }
-push $N35488000
+push $N7d7c4800
  Expression {
   temp_name0 r_dist
   temp_expr0 "((shapesize*scale.r) / 3 - abs(r - center.x))/(shapesize*scale.r)"
@@ -158,7 +164,7 @@ push $N35488000
   xpos 701
   ypos 377
  }
-push $N35488400
+push $N7d7c4f00
  Expression {
   temp_name0 dx
   temp_expr0 "shapesize * scale.r - abs(r - center.x)"
@@ -177,7 +183,7 @@ push $N35488400
   xpos 562
   ypos 306
  }
-push $N35488400
+push $N7d7c4f00
  Dot {
   name Dot2
   note_font_size 20
@@ -209,7 +215,7 @@ push $N35488400
   xpos 562
   ypos 437
  }
-push $N35489c00
+push $N7d7e4100
  Dot {
   name Dot8
   note_font_size 20
