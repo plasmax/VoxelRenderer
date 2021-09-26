@@ -26,7 +26,7 @@ kernel VEnvLight : ImageComputationKernel<ePixelWise>
   void define()
   {
     defineParam(intensity, "intensity", 1.0f);
-    defineParam(absorption, "absorption", 0.5f);                   // Absorption? Rate of Decay
+    defineParam(absorption, "absorption", 0.5f); // Absorption? Rate of Decay
     defineParam(samples, "samples", 50);
   }
 
@@ -56,9 +56,8 @@ kernel VEnvLight : ImageComputationKernel<ePixelWise>
   }
 
   // Axis aligned bounding box intersection for GPU : Shortened for exit only
-  float intersection_exit_AABB(float3 origin, float3 inv_dir, float3 bbox[2])
+  float intersection_exit_AABB(float3 origin, float3 inv_dir)
   {
-    //bool sign[3] {inv_dir.x < 0, inv_dir.y < 0, inv_dir.z < 0};
     float tmin, tmax, tymin, tymax, tzmin, tzmax;
     bool sign = inv_dir.x < 0 ? 0 : 1;
     tmax  = (aabb[sign].x - origin.x) * inv_dir.x;
@@ -81,7 +80,7 @@ kernel VEnvLight : ImageComputationKernel<ePixelWise>
     int id = (voxel.y * resolution.x + voxel.x) * resolution.z + voxel.z;
     int x = id % grid_width;
     int y = id / grid_width;
-    return voxels(x, y)[3]; // Just alpha (density)
+    return voxels(x, y).w; // Just alpha (density)
   }
 
   float Blend(float3 curpos)
@@ -150,7 +149,7 @@ kernel VEnvLight : ImageComputationKernel<ePixelWise>
     float luminance = (colour.x * 0.3f + colour.y * 0.59f + colour.z * 0.11f) * intensity;
 
     // Move starting point to whatever's closest: intersection / light
-    float max_dist = intersection_exit_AABB(voxel, -dir_inv, aabb);
+    float max_dist = intersection_exit_AABB(voxel, -dir_inv);
 
     // ========== Ray Marching ==========
 
@@ -168,7 +167,6 @@ kernel VEnvLight : ImageComputationKernel<ePixelWise>
       // End loop if Transmittance is near 0
       if (result < 1e-6)
         break;
-      //dist += (result < 1e-6) * max_dist;
     }
 
     dst() = result * environment(x, y);
